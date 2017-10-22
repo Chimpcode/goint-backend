@@ -1,0 +1,12 @@
+{
+    "db" : {
+        "users_path" : "./database/users.db",
+        "companies_path":"./database/companies.db",
+        "posts_path":"./database/posts.db"
+    },
+    "storage" : {
+        "endpoint" : "127.0.0.1:9000",
+        "access_key" : "CIUZR4SP1N4ZQA7N35FV",
+        "secret_key" :  "jUpBEdg2wR0zgkykbTqWK5PBpL4PzcsjZ6ladVW3"
+    }
+}
