@@ -201,7 +201,8 @@ var userMutation = graphql.NewObject(graphql.ObjectConfig{
 				email := p.Args["email"].(string)
 				username := p.Args["username"].(string)
 				password := p.Args["password"].(string)
-				fbAccount := p.Args["facebook_account"].([]string)
+				fbAccount := p.Args["facebook_account"].(string)
+				follow := p.Args["follow_posts"].([]string)
 
 				user, err := db.GetUserById(id)
 
@@ -209,10 +210,36 @@ var userMutation = graphql.NewObject(graphql.ObjectConfig{
 					return user, err
 				}
 
-				if !strings.EqualFold(status, "") {
-					user.Status = status
+				if !strings.EqualFold(fullName, "") {
+					user.FullName = fullName
 				}
-
+				if age != 0 {
+					user.Age = age
+				}
+				if !strings.EqualFold(gender, "") {
+					user.Gender = gender
+				}
+				if !strings.EqualFold(login_type, "") {
+					user.LoginType = login_type
+				}
+				if !strings.EqualFold(group, "") {
+					user.Group = group
+				}
+				if !strings.EqualFold(email, "") {
+					user.Email = email
+				}
+				if !strings.EqualFold(username, "") {
+					user.Username = username
+				}
+				if !strings.EqualFold(password, "") {
+					user.Password = password
+				}
+				if !strings.EqualFold(fbAccount, "") {
+					user.FacebookAccount = fbAccount
+				}
+				if len(follow) != 0 {
+					user.FollowPosts = follow
+				}
 				err = db.UpdateUserById(user)
 
 				return user, err
@@ -244,3 +271,9 @@ var userMutation = graphql.NewObject(graphql.ObjectConfig{
 		},
 	},
 })
+
+var userSchema, _ = graphql.NewSchema(graphql.SchemaConfig{
+	Query:    userQuery,
+	Mutation: userMutation,
+})
+

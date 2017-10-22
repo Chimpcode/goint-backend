@@ -13,6 +13,7 @@ var MasterDB map[string]*storm.DB
 const TAG = "goint"
 
 func InitDB(config *utils.GointConfig) error {
+	MasterDB = make(map[string]*storm.DB)
 	dbT := reflect.ValueOf(config.Db)
 
 	for i:=0;i<dbT.NumField();i++ {
