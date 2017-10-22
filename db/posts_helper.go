@@ -26,8 +26,8 @@ func GetPostById(id string) (*types.Post, error) {
 	return post, err
 }
 
-func GetAllPosts() ([]types.User, error) {
-	var posts []types.User
+func GetAllPosts() ([]types.Post, error) {
+	var posts []types.Post
 	err := MasterDB["posts"].All(&posts)
 	return posts, err
 }

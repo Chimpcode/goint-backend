@@ -36,11 +36,9 @@ func main() {
 
 	app := iris.New()
 
+	app.Use(crs)
 
 	api := app.Party("/api/v1")
-
-	api.Use(crs)
-
 
 	err = LinkMiddleAPI(api)
 

@@ -122,7 +122,7 @@ var userMutation = graphql.NewObject(graphql.ObjectConfig{
 				},
 
 				"email": &graphql.ArgumentConfig{
-					Type:         graphql.String,
+					Type:         graphql.NewNonNull(graphql.String),
 					DefaultValue: "",
 				},
 
