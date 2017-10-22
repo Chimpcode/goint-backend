@@ -7,12 +7,53 @@ import (
 	"strings"
 )
 
-var userFields = graphql.BindFields(types.User{})
+// var userFields = graphql.BindFields(types.User{})
 
 var userType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "User",
 	Description: "User of goint project",
-	Fields: userFields,
+	Fields: graphql.Fields{
+		"id": &graphql.Field{
+			Type: graphql.String,
+		},
+		"group": &graphql.Field{
+			Type: graphql.String,
+		},
+		"created_at": &graphql.Field{
+			Type: graphql.DateTime,
+		},
+		"full_name": &graphql.Field{
+			Type: graphql.String,
+		},
+		"age": &graphql.Field{
+			Type: graphql.Int,
+		},
+		"gender": &graphql.Field{
+			Type: graphql.String,
+		},
+		"login_type": &graphql.Field{
+			Type: graphql.String,
+		},
+		"email": &graphql.Field{
+			Type: graphql.String,
+		},
+		"username": &graphql.Field{
+			Type: graphql.String,
+		},
+		"password": &graphql.Field{
+			Type: graphql.String,
+		},
+		"facebook_account": &graphql.Field{
+			Type: graphql.String,
+		},
+		"last_location": &graphql.Field{
+			Type: graphql.String,
+		},
+		"follow_posts": &graphql.Field{
+			Type: graphql.NewList(graphql.String),
+		},
+
+	},
 
 })
 
