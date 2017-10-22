@@ -2,9 +2,7 @@ package api
 
 import (
 	"github.com/graphql-go/graphql"
-	"../types"
 	"../db"
-	"strings"
 )
 
 var locationType = graphql.NewObject(graphql.ObjectConfig{
