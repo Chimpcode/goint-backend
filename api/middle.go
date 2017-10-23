@@ -27,10 +27,17 @@ func LinkUserSchema(party router.Party) error {
 		Pretty:   true,
 		GraphiQL: ACTIVATE_GRAPHIQL,
 	})
+	postHandler := handler.New(&handler.Config{
+		Schema: &postSchema,
+		Pretty:   true,
+		GraphiQL: ACTIVATE_GRAPHIQL,
+	})
 
 	party.Any("/u", func(c iris.Context) {
 		userHandler.ServeHTTP(c.ResponseWriter(), c.Request())
-
+	})
+	party.Any("/p", func(c iris.Context) {
+		postHandler.ServeHTTP(c.ResponseWriter(), c.Request())
 	})
 	return nil
 }

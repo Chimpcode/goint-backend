@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/graphql-go/graphql"
 	"../db"
+	"../types"
 )
 
 var locationType = graphql.NewObject(graphql.ObjectConfig{
@@ -10,10 +11,10 @@ var locationType = graphql.NewObject(graphql.ObjectConfig{
 	Description: "Location type of goint project",
 	Fields: graphql.Fields{
 		"longitude": &graphql.Field{
-			Type: graphql.String,
+			Type: graphql.Float,
 		},
 		"latitude": &graphql.Field{
-			Type: graphql.String,
+			Type: graphql.Float,
 		},
 	},
 
@@ -96,13 +97,13 @@ var postMutation = graphql.NewObject(graphql.ObjectConfig{
 			Description: "Create new post",
 			Args: graphql.FieldConfigArgument{
 				"by": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type: graphql.NewNonNull(graphql.String),
 				},
 				"type": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type: graphql.NewNonNull(graphql.String),
 				},
 				"title": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type: graphql.NewNonNull(graphql.String),
 				},
 				"image": &graphql.ArgumentConfig{
 					Type: graphql.String,
@@ -111,18 +112,52 @@ var postMutation = graphql.NewObject(graphql.ObjectConfig{
 					Type: graphql.String,
 				},
 				"address": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type: graphql.NewNonNull(graphql.String),
 				},
 				"longitude": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type: graphql.Float,
 				},
 				"latitude": &graphql.ArgumentConfig{
-					Type: graphql.String,
+					Type: graphql.Float,
 				},
 				"stock": &graphql.ArgumentConfig{
 					Type: graphql.Int,
 				},
 			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				by := p.Args["by"].(string)
+				type_ := p.Args["type"].(string)
+				title := p.Args["title"].(string)
+				image := p.Args["image"].(string)
+				description := p.Args["description"].(string)
+				address := p.Args["address"].(string)
+				longitude := p.Args["longitude"].(float64)
+				latitude := p.Args["latitude"].(float64)
+				stock := p.Args["stock"].(int)
+
+				var post = types.Post{
+					By: by,
+					Type: type_,
+					Title: title,
+					Image: image,
+					Description: description,
+					Address: address,
+					Location: types.Location{
+						Longitude: longitude,
+						Latitude: latitude,
+					},
+					Stock: stock,
+				}
+
+				_, err := db.PutPostInDb(&post)
+				return post, err
+			},
 		},
 	},
 })
+
+var postSchema, _ = graphql.NewSchema(graphql.SchemaConfig{
+	Query:    postQuery,
+	Mutation: postMutation,
+})
+
