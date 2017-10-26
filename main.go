@@ -10,6 +10,8 @@ import (
 func main() {
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
+		AllowedMethods: []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Origin", "Content-Type", "X-Auth-Token", "Authorization"},
 		AllowCredentials: true,
 	})
 
