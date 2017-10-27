@@ -51,12 +51,6 @@ func GetUserByUsername(username string) (*types.User, error) {
 	return user, err
 }
 
-func GetUsersByGroup(group string) ([]types.User, error) {
-	var users []types.User
-	err := MasterDB["users"].Find("Group", group, &users)
-	return users, err
-}
-
 
 func DeleteUserById(id string) (*types.User, error) {
 	user, err := GetUserById(id)
