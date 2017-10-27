@@ -38,6 +38,26 @@ func GetUsersByGroup(group string) ([]types.User, error) {
 	return users, err
 }
 
+
+func GetUserByEmail(email string) (*types.User, error) {
+	user := new(types.User)
+	err := MasterDB["users"].One("Email", email, user)
+	return user, err
+}
+
+func GetUserByUsername(username string) (*types.User, error) {
+	user := new(types.User)
+	err := MasterDB["users"].One("Username", username, user)
+	return user, err
+}
+
+func GetUsersByGroup(group string) ([]types.User, error) {
+	var users []types.User
+	err := MasterDB["users"].Find("Group", group, &users)
+	return users, err
+}
+
+
 func DeleteUserById(id string) (*types.User, error) {
 	user, err := GetUserById(id)
 	if err != nil {
