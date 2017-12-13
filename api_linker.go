@@ -10,4 +10,7 @@ func LinkMiddleAPI(party router.Party) error {
 		return err
 	}
 	return nil
+
+	api.LinkStorageAPI(party)
+	return nil
 }

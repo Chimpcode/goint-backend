@@ -8,12 +8,12 @@ import (
 	"github.com/kataras/iris"
 )
 
-const ACTIVATE_GRAPHIQL = true
+const ACTIVATEGRAPHIQL = true
 
 func LinkUserSchema(party router.Party) error {
 
 	/*
-	authConfig := basicauth.Config{
+	authConfig… := basicauth.Config{
 		Users:   map[string]string{"bregymr": "malpartida1", "admin": "admin"},
 		Realm:   "Authorization Required", // defaults to "Authorization Required"
 		Expires: time.Duration(30) * time.Minute,
@@ -27,13 +27,13 @@ func LinkUserSchema(party router.Party) error {
 	userHandler := handler.New(&handler.Config{
 		Schema:   &userSchema,
 		Pretty:   true,
-		GraphiQL: ACTIVATE_GRAPHIQL,
+		GraphiQL: ACTIVATEGRAPHIQL,
 	})
 
 	postHandler := handler.New(&handler.Config{
-		Schema: &postSchema,
+		Schema:   &postSchema,
 		Pretty:   true,
-		GraphiQL: ACTIVATE_GRAPHIQL,
+		GraphiQL: ACTIVATEGRAPHIQL,
 	})
 
 	party.Any("/u", func(c iris.Context) {
