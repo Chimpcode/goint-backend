@@ -21,7 +21,7 @@ func InitializedGointStorage(config *utils.GointConfig) error{
 	endpoint := config.Storage.Endpoint
 	accessKeyID := config.Storage.AccessKey
 	secretAccessKey := config.Storage.SecretKey
-	useSSL := true
+	useSSL := false
 
 	var err error
 	GointStorage, err = minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
@@ -126,7 +126,7 @@ func LinkStorageAPI(party router.Party) {
 			})
 			return
 		}
-		_, err = GointStorage.PutObject("images", newId, file, header.Size, minio.PutObjectOptions{})
+		_, err = GointStorage.PutObject("images", newId, file, header.Size, minio.PutObjectOptions{ContentType: "image/jpg"})
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{
