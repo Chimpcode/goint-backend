@@ -59,7 +59,12 @@ func LinkStorageAPI(party router.Party) {
 				return
 			}
 		}
-		image, err := GointStorage.GetObject("images", "goint-"+id, minio.GetObjectOptions{})
+
+		if !strings.HasPrefix(id, "goint-") {
+			id = "goint-" + id
+		}
+
+		image, err := GointStorage.GetObject("images", id, minio.GetObjectOptions{})
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{
@@ -145,6 +150,10 @@ func LinkStorageAPI(party router.Party) {
 				})
 				return
 			}
+		}
+
+		if !strings.HasPrefix(newId, "goint-") {
+			newId = "goint-" + newId
 		}
 
 		_, err = GointStorage.PutObject("images", newId, file, header.Size, minio.PutObjectOptions{ContentType: "image/jpg"})
