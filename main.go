@@ -3,6 +3,7 @@ package main
 import (
 	"./db"
 	"./utils"
+	"./api"
 	"github.com/kataras/iris"
 	"github.com/iris-contrib/middleware/cors"
 )
@@ -23,7 +24,11 @@ func main() {
 	}
 
 	err = db.InitDB(lcpConfig)
+	if err != nil {
+		panic(err)
+	}
 
+	err = api.InitializedGointStorage(lcpConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -38,6 +43,7 @@ func main() {
 
 	app := iris.New()
 
+
 	app.Use(crs)
 
 	api := app.Party("/api/v1")
@@ -48,6 +54,7 @@ func main() {
 		panic(err)
 	}
 
+	app.Logger().SetLevel("debug")
 
 
 	err = app.Run(iris.Addr(":9300"))

@@ -9,7 +9,6 @@ func LinkMiddleAPI(party router.Party) error {
 	if err := api.LinkUserSchema(party); err != nil {
 		return err
 	}
-	return nil
 
 	api.LinkStorageAPI(party)
 	return nil

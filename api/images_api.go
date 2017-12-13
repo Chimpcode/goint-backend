@@ -16,7 +16,7 @@ func init() {
 
 }
 
-func InitializedGointStorage(config utils.GointConfig) {
+func InitializedGointStorage(config *utils.GointConfig) error{
 
 	endpoint := config.Storage.Endpoint
 	accessKeyID := config.Storage.AccessKey
@@ -26,8 +26,9 @@ func InitializedGointStorage(config utils.GointConfig) {
 	var err error
 	GointStorage, err = minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
+	return nil
 }
 
 func LinkStorageAPI(party router.Party) {
@@ -35,6 +36,26 @@ func LinkStorageAPI(party router.Party) {
 		id := c.Params().Get("id")
 		if !strings.Contains(id, ".jpg") {
 			id += ".jpg"
+		}
+
+		existBucket, err := GointStorage.BucketExists("images")
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error_at": err.Error(),
+			})
+			return
+		}
+
+		if !existBucket {
+			err := GointStorage.MakeBucket("images", "")
+			if err != nil {
+				c.StatusCode(iris.StatusInternalServerError)
+				c.JSON(iris.Map{
+					"error_at": err.Error(),
+				})
+				return
+			}
 		}
 		image, err := GointStorage.GetObject("images", "goint-"+id, minio.GetObjectOptions{})
 		if err != nil {
