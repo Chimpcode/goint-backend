@@ -6,10 +6,11 @@ import (
 	"../utils"
 	"log"
 	"context"
+	"strconv"
 )
 type SimplePlace struct {
-	Latitude float64 `fako:"latitude_direction"`
-	Longitude float64 `fako:"longitude_direction"`
+	Latitude string `fako:"latitude_direction"`
+	Longitude string `fako:"longitude_direction"`
 }
 
 func FillFake(config *utils.GointConfig) {
@@ -37,8 +38,12 @@ func FillFake(config *utils.GointConfig) {
 
 	var place SimplePlace
 	fako.Fill(&place)
-	req.Var("latitude", place.Latitude)
-	req.Var("longitude", place.Longitude)
+
+	lat, _ := strconv.ParseFloat(place.Latitude, 64)
+	lon, _ :=strconv.ParseFloat(place.Longitude, 64)
+
+	req.Var("latitude", lat)
+	req.Var("longitude", lon)
 
 	// run it and capture the response
 	ctx := context.Background()
