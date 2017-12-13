@@ -88,6 +88,7 @@ func LinkStorageAPI(party router.Party) {
 			})
 			return
 		}
+		c.StatusCode(iris.StatusOK)
 		c.SendFile("/tmp/image.jpg", "image.jpg")
 
 	})
@@ -164,5 +165,11 @@ func LinkStorageAPI(party router.Party) {
 			})
 			return
 		}
+
+		c.StatusCode(iris.StatusOK)
+		c.JSON(iris.Map{
+			"success": "Image created with name: " + newId,
+		})
+
 	})
 }

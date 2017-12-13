@@ -8,5 +8,6 @@
         "endpoint" : "13.90.253.208:9000",
         "access_key" : "VMVNBCZY6XLOOE38RF3S",
         "secret_key" :  "EN0LclF2fzPOcQFiMoaDqxADfmbbT0JpiWskFOkn"
-    }
+    },
+    "graph_ql_server": "http://13.90.253.208:60000/simple/v1/cjay8qqaf00040138wrmhgryu"
 }

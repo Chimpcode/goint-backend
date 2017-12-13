@@ -16,5 +16,6 @@ type Storage struct {
 type GointConfig struct {
 	Db      Db      `json:"db"`
 	Storage Storage `json:"storage"`
+	GraphQLServer string `json:"graph_ql_server"`
 }
 
