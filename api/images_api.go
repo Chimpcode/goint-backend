@@ -32,6 +32,8 @@ func InitializedGointStorage(config *utils.GointConfig) error{
 }
 
 func LinkStorageAPI(party router.Party) {
+	location := "us-east-1"
+
 	party.Get("/i/{id:string}", func(c iris.Context) {
 		id := c.Params().Get("id")
 		if !strings.Contains(id, ".jpg") {
@@ -48,7 +50,7 @@ func LinkStorageAPI(party router.Party) {
 		}
 
 		if !existBucket {
-			err := GointStorage.MakeBucket("images", "")
+			err := GointStorage.MakeBucket("images", location)
 			if err != nil {
 				c.StatusCode(iris.StatusInternalServerError)
 				c.JSON(iris.Map{
