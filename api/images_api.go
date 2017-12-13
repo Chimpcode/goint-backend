@@ -126,6 +126,27 @@ func LinkStorageAPI(party router.Party) {
 			})
 			return
 		}
+
+		existBucket, err := GointStorage.BucketExists("images")
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error_at": err.Error(),
+			})
+			return
+		}
+
+		if !existBucket {
+			err := GointStorage.MakeBucket("images", location)
+			if err != nil {
+				c.StatusCode(iris.StatusInternalServerError)
+				c.JSON(iris.Map{
+					"error_at": err.Error(),
+				})
+				return
+			}
+		}
+
 		_, err = GointStorage.PutObject("images", newId, file, header.Size, minio.PutObjectOptions{ContentType: "image/jpg"})
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
