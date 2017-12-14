@@ -4,7 +4,7 @@ import (
 	"./db"
 	"./utils"
 	"./api"
-	"./extras"
+	// "./extras"
 	"github.com/kataras/iris"
 	"github.com/iris-contrib/middleware/cors"
 )
@@ -57,7 +57,7 @@ func main() {
 
 	app.Logger().SetLevel("debug")
 
-	extras.FillFake(gointConfig)
+	// extras.FillFake(gointConfig)
 	err = app.Run(iris.Addr(":9300"))
 	if err != nil {
 		panic(err)
