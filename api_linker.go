@@ -6,10 +6,5 @@ import (
 )
 
 func LinkMiddleAPI(party router.Party) error {
-	if err := api.LinkUserSchema(party); err != nil {
-		return err
-	}
 
-	api.LinkStorageAPI(party)
-	return nil
 }

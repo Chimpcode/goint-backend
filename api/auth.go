@@ -5,8 +5,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
 	"strings"
-	"../db"
-	"../types"
+	"../graphql"
 
 	"time"
 	"log"
@@ -22,17 +21,18 @@ func myHandler(c iris.Context) {
 	c.JSON(user.Claims)
 }
 
-func getJWTToken(user *types.User) (string, error) {
+func getJWTToken(company *graphql.MiniCompany) (string, error) {
 	signer := jwt.New(jwt.SigningMethodHS256)
 
-	signer.Claims.(jwt.MapClaims)["iss"] = user.Group
+	signer.Claims.(jwt.MapClaims)["iss"] = "company"
 	signer.Claims.(jwt.MapClaims)["exp"] = time.Now().Add(TimeToExpires).Unix()
-	signer.Claims.(jwt.MapClaims)["user"] = struct {
+	signer.Claims.(jwt.MapClaims)["company"] = struct {
 		Name string `json:"name"`
 		Email string `json:"email"`
+		Ruc string `json:"ruc"`
+		SocialReason string `json:"social_reason"`
 		Logged bool `json:"logged"`
-		Group string `json:"group"`
-	}{user.FullName, user.Email, true, user.Group}
+	}{company.CommercialName, company.Email, company.Ruc, company.SocialReason, true}
 
 	return signer.SignedString([]byte(SECRET))
 
@@ -71,9 +71,12 @@ func LinkAuthApi (auth iris.Party) error {
 			return
 		}
 
+		user, err := graphql.GetCompanyFromGCbyEmail(data.Email)
+		log.Println(user)
+
 		if !strings.EqualFold(data.Email, "") {
 			// Search by Email
-			user, err := db.GetUserByEmail(strings.ToLower(data.Email))
+
 
 			if err != nil {
 				if strings.Contains(err.Error(), "exist") {
@@ -105,7 +108,6 @@ func LinkAuthApi (auth iris.Party) error {
 			}
 		} else if !strings.EqualFold(data.Username, "") {
 			// Search by Username
-			user, err := db.GetUserByUsername(strings.ToLower(data.Username))
 
 			if err != nil {
 				if strings.Contains(err.Error(), "exist") {

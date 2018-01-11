@@ -3,7 +3,7 @@ package db
 import (
 	"../utils"
 	"github.com/asdine/storm"
-	"github.com/boltdb/bolt"
+	"github.com/coreos/bbolt"
 	"time"
 	"reflect"
 )

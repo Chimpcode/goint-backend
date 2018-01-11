@@ -47,10 +47,19 @@ func main() {
 
 	app.Use(crs)
 
-	api := app.Party("/api/v1")
+	apiRoute := app.Party("/api/v1")
 
-	err = LinkMiddleAPI(api)
+	if err := api.LinkUserSchema(apiRoute); err != nil {
+		panic(err)
+	}
 
+	api.LinkStorageAPI(apiRoute)
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = api.LinkAuthApi(apiRoute)
 	if err != nil {
 		panic(err)
 	}
