@@ -29,21 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	err = api.InitializedGointStorage(gointConfig)
-	if err != nil {
-		panic(err)
-	}
-
-	/*
-		err = db.FeedDbWithFakeUsers(10)
-
-		if err != nil {
-			panic(err)
-		}
-	*/
-
 	app := iris.New()
-
 
 	app.Use(crs)
 
@@ -52,10 +38,7 @@ func main() {
 	if err := api.LinkUserSchema(apiRoute); err != nil {
 		panic(err)
 	}
-
-	api.LinkStorageAPI(apiRoute)
-
-	if err != nil {
+	if err := api.LinkStorageAPI(apiRoute, gointConfig); err != nil {
 		panic(err)
 	}
 

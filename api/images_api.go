@@ -1,175 +1,129 @@
 package api
 
 import (
-	"github.com/minio/minio-go"
-	"github.com/kataras/iris"
 	"github.com/kataras/iris/core/router"
+	"github.com/kataras/iris"
+	"../graphql"
+	"../galaxy"
 	"../utils"
 	"strings"
-	"io/ioutil"
-	"os"
 )
 
-var GointStorage *minio.Client
 
-func init() {
-
-}
-
-func InitializedGointStorage(config *utils.GointConfig) error{
-
-	endpoint := config.Storage.Endpoint
-	accessKeyID := config.Storage.AccessKey
-	secretAccessKey := config.Storage.SecretKey
-	useSSL := false
-
-	var err error
-	GointStorage, err = minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
+func LinkStorageAPI(party router.Party, config *utils.GointConfig) error {
+	err :=galaxy.InitGointStorage(config)
 	if err != nil {
 		return err
 	}
-	return nil
-}
 
-func LinkStorageAPI(party router.Party) {
-	location := "us-east-1"
+	party.Get("/i/{star: string}/{imageName: string}", func(c iris.Context) {
+		star := c.Params().Get("star")
+		exist, err := graphql.CheckIfCompanyExistByRuc(star)
 
-	party.Get("/i/{id:string}", func(c iris.Context) {
-		id := c.Params().Get("id")
-		if !strings.Contains(id, ".jpg") {
-			id += ".jpg"
-		}
-
-		existBucket, err := GointStorage.BucketExists("images")
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{
-				"error_at": err.Error(),
+				"error": err.Error(),
 			})
 			return
 		}
 
-		if !existBucket {
-			err := GointStorage.MakeBucket("images", location)
-			if err != nil {
-				c.StatusCode(iris.StatusInternalServerError)
-				c.JSON(iris.Map{
-					"error_at": err.Error(),
-				})
-				return
-			}
-		}
-
-		if !strings.HasPrefix(id, "goint-") {
-			id = "goint-" + id
-		}
-
-		image, err := GointStorage.GetObject("images", id, minio.GetObjectOptions{})
-		if err != nil {
-			c.StatusCode(iris.StatusInternalServerError)
+		if !exist {
+			c.StatusCode(iris.StatusBadRequest)
 			c.JSON(iris.Map{
-				"error_at": err.Error(),
+				"error": "Company not exists",
 			})
 			return
 		}
-		data, err := ioutil.ReadAll(image)
-		if err != nil {
-			c.StatusCode(iris.StatusInternalServerError)
+
+		imageName := c.Params().Get("imageName")
+		if !strings.HasSuffix(imageName, ".png") {
+			c.StatusCode(iris.StatusBadRequest)
 			c.JSON(iris.Map{
-				"error_at": err.Error(),
+				"error": "Invalid image name",
 			})
 			return
 		}
-		err = ioutil.WriteFile("/tmp/image.jpg", data, os.ModePerm)
+
+		pathOfImage, err := galaxy.DownloadPhoto(imageName, star)
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{
-				"error_at": err.Error(),
+				"error": err.Error(),
+			})
+			return
+		}
+
+
+		err = c.ServeFile(pathOfImage, false)
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
 			})
 			return
 		}
 		c.StatusCode(iris.StatusOK)
-		c.SendFile("/tmp/image.jpg", "image.jpg")
+		return
+
 
 	})
 
-	party.Post("/i/{id:string}", func(c iris.Context) {
-		newId := c.Params().Get("id")
+	party.Post("/i/{star: string}", func(c iris.Context) {
+		star := c.Params().Get("star")
+		exist, err := graphql.CheckIfCompanyExistByRuc(star)
 
-		if newId == "" {
-			newId = c.FormValue("name")
-		}
-		if newId == "" {
-			newId = c.FormValue("id")
-		}
-		if !strings.Contains(newId, ".jpg") {
-			newId += ".jpg"
-		}
-		file, header, err := c.FormFile("file")
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{
-				"error_at": err.Error(),
-			})
-			return
-		}
-		defer file.Close()
-		data, err := ioutil.ReadAll(file)
-		if err != nil {
-			c.StatusCode(iris.StatusInternalServerError)
-			c.JSON(iris.Map{
-				"error_at": err.Error(),
+				"error": err.Error(),
 			})
 			return
 		}
 
-
-		err = ioutil.WriteFile("/tmp/image_w.jpg", data, os.ModeAppend|os.ModeDir)
-		if err != nil {
-			c.StatusCode(iris.StatusInternalServerError)
+		if !exist {
+			c.StatusCode(iris.StatusBadRequest)
 			c.JSON(iris.Map{
-				"error_at": err.Error(),
+				"error": "Company not exists",
 			})
 			return
 		}
 
-		existBucket, err := GointStorage.BucketExists("images")
+		file, info, err := c.FormFile("image")
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{
-				"error_at": err.Error(),
+				"error": err.Error(),
 			})
 			return
 		}
 
-		if !existBucket {
-			err := GointStorage.MakeBucket("images", location)
-			if err != nil {
-				c.StatusCode(iris.StatusInternalServerError)
-				c.JSON(iris.Map{
-					"error_at": err.Error(),
-				})
-				return
-			}
+		contentType := info.Header["Content-Type"][0]
+		if contentType != "image/png" {
+			c.StatusCode(iris.StatusBadRequest)
+			c.JSON(iris.Map{
+				"file_type": contentType,
+				"error": "File type not support",
+			})
+			return
 		}
 
-		if !strings.HasPrefix(newId, "goint-") {
-			newId = "goint-" + newId
-		}
-
-		_, err = GointStorage.PutObject("images", newId, file, header.Size, minio.PutObjectOptions{ContentType: "image/jpg"})
+		filename, err := galaxy.UploadPhoto(file, info.Filename, star)
 		if err != nil {
 			c.StatusCode(iris.StatusInternalServerError)
 			c.JSON(iris.Map{
-				"error_at": err.Error(),
+				"error": err.Error(),
 			})
 			return
 		}
 
 		c.StatusCode(iris.StatusOK)
 		c.JSON(iris.Map{
-			"success": "Image created with name: " + newId,
+			"filename": filename,
 		})
 
 	})
+
+
+
 }
