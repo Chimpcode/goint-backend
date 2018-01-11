@@ -180,3 +180,16 @@ func DownloadPhoto(name string, bucketName string) (string, error) {
 	return file.Name(), nil
 }
 
+func GetAllImagesFromBucket(bucketName string) []string {
+	var done = make(chan struct{}, 1)
+	fileStream := GointStorage.ListObjectsV2(bucketName, "", true, done)
+
+	allFiles := make([]string, 1)
+	for fileInfo := range fileStream {
+		name := fileInfo.Metadata.Get("name")
+		allFiles = append(allFiles, bucketName + "/" + name)
+	}
+	<-done
+
+	return allFiles
+}

@@ -7,6 +7,7 @@ import (
 	"../galaxy"
 	"../utils"
 	"strings"
+	"log"
 )
 
 
@@ -15,6 +16,34 @@ func LinkStorageAPI(party router.Party, config *utils.GointConfig) error {
 	if err != nil {
 		return err
 	}
+
+	party.Get("/i/{star: string}", func(c iris.Context) {
+		star := c.Params().Get("star")
+		exist, err := graphql.CheckIfCompanyExistByRuc(star)
+
+		if err != nil {
+			c.StatusCode(iris.StatusInternalServerError)
+			c.JSON(iris.Map{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if !exist {
+			c.StatusCode(iris.StatusBadRequest)
+			c.JSON(iris.Map{
+				"error": "Company not exists",
+			})
+			return
+		}
+
+		files := galaxy.GetAllImagesFromBucket(star)
+
+		log.Println("Files received: ", files)
+
+		c.StatusCode(iris.StatusOK)
+		c.JSON(files)
+	})
 
 	party.Get("/i/{star: string}/{imageName: string}", func(c iris.Context) {
 		star := c.Params().Get("star")
