@@ -187,9 +187,9 @@ func GetAllImagesFromBucket(bucketName string) []string {
 	allFiles := make([]string, 1)
 	for fileInfo := range fileStream {
 		name := fileInfo.Metadata.Get("name")
+		log.Println(name)
 		allFiles = append(allFiles, bucketName + "/" + name)
 	}
-	<-done
 
 	return allFiles
 }
