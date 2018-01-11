@@ -71,23 +71,28 @@ func LinkStorageAPI(party router.Party, config *utils.GointConfig) error {
 
 	party.Post("/i/{star: string}", func(c iris.Context) {
 		star := c.Params().Get("star")
-		exist, err := graphql.CheckIfCompanyExistByRuc(star)
+		if star != "milkyway" {
+			exist, err := graphql.CheckIfCompanyExistByRuc(star)
 
-		if err != nil {
-			c.StatusCode(iris.StatusInternalServerError)
-			c.JSON(iris.Map{
-				"error": err.Error(),
-			})
-			return
+			if err != nil {
+				c.StatusCode(iris.StatusInternalServerError)
+				c.JSON(iris.Map{
+					"error": err.Error(),
+				})
+				return
+			}
+
+			if !exist {
+				c.StatusCode(iris.StatusBadRequest)
+				c.JSON(iris.Map{
+					"error": "Company not exists",
+				})
+				return
+			}
+		} else if star == "milkyway" {
+			
 		}
 
-		if !exist || star == "milkyway"{
-			c.StatusCode(iris.StatusBadRequest)
-			c.JSON(iris.Map{
-				"error": "Company not exists",
-			})
-			return
-		}
 
 		file, info, err := c.FormFile("image")
 		if err != nil {
