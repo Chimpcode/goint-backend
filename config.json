@@ -5,7 +5,7 @@
         "posts_path":"./database/posts.db"
     },
     "storage" : {
-        "endpoint" : "127.0.0.0:9000",
+        "endpoint" : "127.0.0.1:9000",
         "access_key" : "N2669Z2B8BCN5CMRRI85",
         "secret_key" :  "YvqYwRfhT5nEGZsDoKF5v9bcHnMCypRS9OzZfk1o"
     },
