@@ -81,7 +81,7 @@ func LinkStorageAPI(party router.Party, config *utils.GointConfig) error {
 			return
 		}
 
-		if !exist {
+		if !exist || star == "milkyway"{
 			c.StatusCode(iris.StatusBadRequest)
 			c.JSON(iris.Map{
 				"error": "Company not exists",
