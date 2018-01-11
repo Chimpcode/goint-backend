@@ -184,7 +184,7 @@ func GetAllImagesFromBucket(bucketName string) []string {
 	var done = make(chan struct{}, 1)
 	fileStream := GointStorage.ListObjectsV2(bucketName, "", true, done)
 
-	allFiles := make([]string, 1)
+	allFiles := make([]string, 0)
 	for fileInfo := range fileStream {
 		name := fileInfo.Key
 		log.Println(fileInfo.Key)
