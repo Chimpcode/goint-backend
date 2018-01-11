@@ -124,6 +124,7 @@ func LinkStorageAPI(party router.Party, config *utils.GointConfig) error {
 
 	})
 
+	return nil
 
 
 }
