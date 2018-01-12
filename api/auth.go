@@ -80,7 +80,7 @@ func LinkAuthApi (auth iris.Party) error {
 
 			if err != nil {
 				if strings.Contains(err.Error(), "exist") {
-					c.StatusCode(iris.StatusForbidden)
+					c.StatusCode(iris.StatusUnauthorized)
 					c.JSON(iris.Map{"error": err.Error()})
 					return
 				}
@@ -97,12 +97,13 @@ func LinkAuthApi (auth iris.Party) error {
 					c.JSON(iris.Map{"error": err.Error()})
 					return
 				}
+				c.StatusCode(iris.StatusOK)
 				c.JSON(iris.Map{"token": token})
 				session.Set("authenticated", true)
 				return
 
 			} else {
-				c.StatusCode(iris.StatusForbidden)
+				c.StatusCode(iris.StatusUnauthorized)
 				c.JSON(iris.Map{"error": "Invalid credentials"})
 				return
 			}
@@ -111,7 +112,7 @@ func LinkAuthApi (auth iris.Party) error {
 
 			if err != nil {
 				if strings.Contains(err.Error(), "exist") {
-					c.StatusCode(iris.StatusForbidden)
+					c.StatusCode(iris.StatusUnauthorized)
 					c.JSON(iris.Map{"error": err.Error()})
 					return
 				}
@@ -128,19 +129,20 @@ func LinkAuthApi (auth iris.Party) error {
 					c.JSON(iris.Map{"error": err.Error()})
 					return
 				}
+				c.StatusCode(iris.StatusOK)
 				c.JSON(iris.Map{"token": token})
 				session.Set("authenticated", true)
 				return
 
 
 			} else {
-				c.StatusCode(iris.StatusForbidden)
+				c.StatusCode(iris.StatusUnauthorized)
 				c.JSON(iris.Map{"error": "Invalid credentials"})
 				return
 			}
 
 		} else {
-			c.StatusCode(iris.StatusForbidden)
+			c.StatusCode(iris.StatusUnauthorized)
 			c.JSON(iris.Map{"error": "Invalid credentials"})
 			return
 		}
