@@ -27,12 +27,13 @@ func getJWTToken(company *graphql.MiniCompany) (string, error) {
 	signer.Claims.(jwt.MapClaims)["iss"] = "company"
 	signer.Claims.(jwt.MapClaims)["exp"] = time.Now().Add(TimeToExpires).Unix()
 	signer.Claims.(jwt.MapClaims)["company"] = struct {
+		Id string `json:"id"`
 		Name string `json:"name"`
 		Email string `json:"email"`
 		Ruc string `json:"ruc"`
 		SocialReason string `json:"social_reason"`
 		Logged bool `json:"logged"`
-	}{company.CommercialName, company.Email, company.Ruc, company.SocialReason, true}
+	}{company.Id, company.CommercialName, company.Email, company.Ruc, company.SocialReason, true}
 
 	return signer.SignedString([]byte(SECRET))
 
