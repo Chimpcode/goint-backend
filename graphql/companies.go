@@ -10,13 +10,14 @@ import (
 	"errors"
 )
 
+var endpoint string = "https://api.graph.cool/simple/v1/cjdchobh82rgk0146bw4p4kyu"
 // GC = Graphcool
 func GetCompanyFromGCbyEmail(email string) (*MiniCompany, error) {
 	var user MiniCompany
 
+
 	log.Printf("Searching with '%s' email", email)
 
-	endpoint := "http://13.90.253.208:60000/simple/v1/cjcae1ay000en0189jqrz4n2q"
 
 	vars := map[string]interface{}{
 		"email": email,
