@@ -10,12 +10,13 @@ import (
 	"errors"
 )
 
+
 func GetCompanyFromGCbySocialReason(socialReason string) (*MiniCompany, error) {
 	var user MiniCompany
 
 	log.Printf("Searching with '%s' socialReason", socialReason)
 
-	endpoint := "http://13.90.253.208:60000/simple/v1/cjcae1ay000en0189jqrz4n2q"
+
 
 	vars := map[string]interface{}{
 		"social": socialReason,
@@ -72,8 +73,6 @@ func GetCompanyFromGCbyRuc(ruc string) (*MiniCompany, error) {
 	var user MiniCompany
 
 	log.Printf("Searching with '%s' ruc", ruc)
-
-	endpoint := "http://13.90.253.208:60000/simple/v1/cjcae1ay000en0189jqrz4n2q"
 
 	vars := map[string]interface{}{
 		"ruc": ruc,
