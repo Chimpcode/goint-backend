@@ -11,7 +11,7 @@ import (
 	"log"
 )
 
-const SECRET = "goint2017"
+const SECRET = "goint2018"
 
 func myHandler(c iris.Context) {
 	log.Println("into dashboard handler")

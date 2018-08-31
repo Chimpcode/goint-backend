@@ -10,7 +10,9 @@ import (
 	"errors"
 )
 
-var endpoint string = "https://api.graph.cool/simple/v1/cjdchobh82rgk0146bw4p4kyu"
+// var endpoint string = "https://api.graph.cool/simple/v1/cjdchobh82rgk0146bw4p4kyu"
+var endpoint string = "https://api.graph.cool/simple/v1/cjlborupt7iji0181iefxheiv"
+
 // GC = Graphcool
 func GetCompanyFromGCbyEmail(email string) (*MiniCompany, error) {
 	var user MiniCompany

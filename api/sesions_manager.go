@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var TimeToExpires =  5*time.Hour
+var TimeToExpires =  1*time.Hour
 var cookieNameForSessionID = "gointlogin"
 
 
